@@ -4,7 +4,7 @@ from g_python.hmessage import Direction
 
 extension_info = {
     "title": "RollerWalk",
-    "description": ":rw on&off ",
+    "description": ":rw on&off, c: ",
     "version": "1.0",
     "author": "funkydemir66"
 }
@@ -16,7 +16,7 @@ sec_c0d = False
 ssec_cod2 = False
 sec_cod = False
 sec_kod = False
-sc = True
+sc = False
 
 def konusma(msj):
     global sc, sec_kod, kod2, kod3, KASAR, cod2, codd2, sec_cod, cod3, codd3, ssec_cod2, sec_c0d
@@ -27,7 +27,6 @@ def konusma(msj):
 
     if text == ':rw on':
         msj.is_blocked = True
-        sec_kod = True
         sec_cod = True
         ssec_cod2 = True
         sc = True
@@ -37,10 +36,16 @@ def konusma(msj):
     if text == ':rw off':
         msj.is_blocked = True
         ext.send_to_client('{in:Chat}{i:123456789}{s:"Script: off "}{i:0}{i:30}{i:0}{i:0}')
-        sec_kod = False
         sec_cod = False
         ssec_cod2 = False
+        sc = False
 
+
+    if text == ':c':
+        if sc:
+            msj.is_blocked = True
+            ext.send_to_client('{in:Chat}{i:123456789}{s:"Script: off "}{i:0}{i:30}{i:0}{i:0}')
+            sec_kod = True
 
 
 def yukle_kod(p):
@@ -48,8 +53,9 @@ def yukle_kod(p):
 
     if sec_kod:
         _, kod2, kod3, _ = p.packet.read("iiii")
-        p.is_blocked = True
+        p.is_blocked = False
         ext.send_to_client('{in:Chat}{i:123456789}{s:"İdd: Saved v/ (code1: '+str(kod2)+') (code2: '+str(kod3)+') "}{i:0}{i:30}{i:0}{i:0}')
+        sec_kod = False
 
 
 def yukle_kod2(d):
@@ -67,7 +73,6 @@ def SASAR(f):
         ext.send_to_server('{out:MoveAvatar}{i:'+str(kod2)+'}{i:'+str(kod3)+'}')
         kod2 = 0
         kod3 = 0
-        ext.send_to_client('{in:Chat}{i:123456789}{s:"RollerWalk is working"}{i:0}{i:30}{i:0}{i:0}')
         f.is_blocked = False
 
 ext.intercept(Direction.TO_SERVER, konusma, 'Chat')
